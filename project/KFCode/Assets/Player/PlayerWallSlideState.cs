@@ -11,6 +11,7 @@ public class PlayerWallSlideState : PlayerState
     public override void enter()
     {
         base.enter();
+        player.currentSpeed = 0;
     }
 
     public override void exit()
@@ -31,7 +32,7 @@ public class PlayerWallSlideState : PlayerState
         // 若有输入且方向非现在方向则退出状态
         if(xInput != 0 && xInput != player.facingDir)
         {
-            stateMachine.changeState(player.idleState);
+            stateMachine.changeState(player.airState);
         }
 
         // 新添加：若没有按住方向键退出状态
@@ -47,7 +48,7 @@ public class PlayerWallSlideState : PlayerState
         }
         else
         {
-            rb.velocity = new Vector2(0, rb.velocity.y * 0.7f);
+            rb.velocity = new Vector2(0, rb.velocity.y * player.wallSlideDecay);
         }
 
         // 若接触地面则退出状态

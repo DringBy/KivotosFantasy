@@ -8,11 +8,16 @@ public class Player : MonoBehaviour
     [Header("Move Info")]
     public float maxSpeed = 9f;
     public float jumpForce = 12f;
-    public float acceleration = 0.1f;  // 加速度
-    public float deceleration = 0.3f;  // 减速度
+    public float acceleration = 3f;  // 加速度
+    public float deceleration = 6f;  // 减速度
+    public float jumpDecay = 0.5f;  // 跳跃时若没长时间按住space的高度惩罚
     public float currentSpeed;
-    public float currentLeftSpeed;
-    public float currentRightSpeed;
+
+    [Header("Wall Info")]
+    public float wallSlideDecay = 0.85f;
+    public float wallJumpTime = 0.25f;
+    public float wallJumpForceX = 9f;
+    public float wallJumpForceY = 9f;
 
     [Header("Dash Info")]
     [SerializeField] private float dashCoolDown;  // 多久能冲
@@ -41,6 +46,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float wallCheckDistance;
     [SerializeField] private LayerMask whatIsGround;
 
+
     public int facingDir { get; private set; } = 1;
     private bool facingRight = true;
 
@@ -58,8 +64,6 @@ public class Player : MonoBehaviour
     public PlayerDashState dashState { get; private set; }
     public PlayerWallSlideState wallSlideState { get; private set; }
     public PlayerWallJumpState wallJumpState { get; private set; }
-    public PlayerAccelerateState accelerateState { get; private set; }
-    public PlayerDecelerateState decelerateState { get; private set; }
     #endregion
 
     private void Awake()
@@ -73,8 +77,6 @@ public class Player : MonoBehaviour
         dashState = new PlayerDashState(stateMachine, this, "Dash");
         wallSlideState = new PlayerWallSlideState(stateMachine, this, "WallSlide");
         wallJumpState = new PlayerWallJumpState(stateMachine, this, "Jump");
-        accelerateState = new PlayerAccelerateState(stateMachine, this, "Move");
-        decelerateState = new PlayerDecelerateState(stateMachine, this, "Move");
     }
 
     private void Start()
@@ -102,7 +104,38 @@ public class Player : MonoBehaviour
         flipController(_xVelocity);
     }
 
-    // 没搞懂
+    /// <summary>
+    /// 同向运动过程中加速
+    /// </summary>
+    /// <param name="xInput"></param>
+    public void accelerate(float xInput)
+    {
+        if (facingDir * (currentSpeed + xInput * acceleration) >= maxSpeed)
+            currentSpeed = facingDir * maxSpeed;
+        else
+            currentSpeed += xInput * acceleration;
+    }
+
+    /// <summary>
+    /// 没有键盘输入时减速
+    /// </summary>
+    public void decelerate()
+    {
+        if ((currentSpeed - facingDir * deceleration) * currentSpeed > 0)
+            currentSpeed -= facingDir * deceleration;
+        else
+            currentSpeed = 0;
+    }
+
+    /// <summary>
+    ///  速度方向与输入方向不同时，反向加速
+    /// </summary>
+    /// <param name="xInput"></param>
+    public void reverseAccelerate(float xInput)
+    {
+        currentSpeed += xInput * acceleration - facingDir * deceleration;
+    }
+
     public bool isGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);
     public bool isWallDetected() => Physics2D.Raycast(wallCheck.position, Vector2.right * facingDir, wallCheckDistance, whatIsGround);
      

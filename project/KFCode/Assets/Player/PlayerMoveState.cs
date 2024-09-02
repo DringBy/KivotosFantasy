@@ -46,62 +46,39 @@ public class PlayerMoveState : PlayerGroundedState
     {
         base.update();
 
-        if (player.isWallDetected() && player.currentSpeed * player.facingDir > 0)
+        if (xInput == 0 && player.currentSpeed == 0)
         {
-            //player.currentLeftSpeed = 0;
-            //player.currentRightSpeed = 0;
+            stateMachine.changeState(player.idleState);
+        } 
+        else if (xInput == 0 && player.currentSpeed != 0)
+        {
+            //if ((player.currentSpeed - player.facingDir * player.deceleration) * player.currentSpeed > 0)
+            //    player.currentSpeed -= player.facingDir * player.deceleration;
+            //else
+            //    player.currentSpeed = 0;
+            player.decelerate();
+        }
+        else if (xInput * player.facingDir > 0)  // 同向运动加速
+        {
+            //if (player.facingDir * (player.currentSpeed + xInput * player.acceleration) >= player.maxSpeed)
+            //    player.currentSpeed = player.facingDir * player.maxSpeed;
+            //else 
+            //    player.currentSpeed += xInput * player.acceleration;
+            player.accelerate(xInput);
+        }
+        else // 反向运动
+        {
+            //player.currentSpeed += xInput * player.acceleration - player.facingDir * player.deceleration;
+            player.reverseAccelerate(xInput);
+        }
+
+        if (player.isWallDetected() && xInput == 0)
+        {
             player.currentSpeed = 0;
             stateMachine.changeState(player.idleState);
             return;
         }
 
-        if (xInput == 0 && player.currentSpeed == 0)
-        {
-            //player.currentLeftSpeed = 0;
-            //player.currentRightSpeed = 0;
-            //player.currentSpeed = 0;
-            stateMachine.changeState(player.idleState);
-        } 
-        else if (xInput == 0 && player.currentSpeed != 0)
-        {
-            /*if (player.facingDir == -1)
-            {
-                player.currentRightSpeed = 0;
-                player.currentLeftSpeed = player.currentLeftSpeed - player.deceleration < 0 ? 0 : player.currentLeftSpeed - player.deceleration;
-            }
-            else if (player.facingDir == 1)
-            {
-                player.currentLeftSpeed = 0;
-                player.currentRightSpeed = player.currentRightSpeed - player.deceleration < 0 ? 0 : player.currentRightSpeed - player.deceleration;
-            }*/
-            if ((player.currentSpeed - player.facingDir * player.deceleration) * player.currentSpeed > 0)
-                player.currentSpeed -= player.facingDir * player.deceleration;
-            else
-                player.currentSpeed = 0;
-        }
-        else if (xInput * player.facingDir > 0)
-        {
-            if (player.facingDir * (player.currentSpeed + xInput * player.acceleration) >= player.maxSpeed)
-                player.currentSpeed = player.facingDir * player.maxSpeed;
-            else 
-                player.currentSpeed += xInput * player.acceleration;
-        }
-        else
-        {
-            player.currentSpeed += xInput * player.acceleration - player.facingDir * player.deceleration;
-        }
-        /*else if(xInput > 0)
-        {
-            player.currentRightSpeed = player.currentRightSpeed + player.acceleration > player.maxSpeed ? player.maxSpeed : player.currentRightSpeed + player.acceleration;
-            player.currentLeftSpeed = player.currentLeftSpeed - player.deceleration < 0 ? 0 : player.currentLeftSpeed - player.deceleration;
-        }
-        else if(xInput < 0)
-        {
-            player.currentLeftSpeed = player.currentLeftSpeed + player.acceleration > player.maxSpeed ? player.maxSpeed : player.currentLeftSpeed + player.acceleration;
-            player.currentRightSpeed = player.currentRightSpeed - player.deceleration < 0 ? 0 : player.currentRightSpeed - player.deceleration;
-        }
-        player.currentSpeed = player.currentRightSpeed - player.currentLeftSpeed;
-        */
         player.setVelocity(player.currentSpeed, rb.velocity.y);
     }
 }

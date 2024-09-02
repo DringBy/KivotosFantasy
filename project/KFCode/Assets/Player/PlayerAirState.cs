@@ -22,13 +22,27 @@ public class PlayerAirState : PlayerState
     {
         base.update();
 
+        //// 下落途中控制player
+        //if (xInput != 0)
+        //{
+        //    player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
+        //}
         // 下落途中控制player
-        if(xInput != 0)
+        if (xInput == 0 && player.currentSpeed != 0)
         {
-            player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
+            player.decelerate();
         }
+        else if (xInput * player.facingDir > 0)
+        {
+            player.accelerate(xInput);
+        }
+        else if (xInput * player.facingDir < 0)
+        {
+            player.reverseAccelerate(xInput);
+        }
+        player.setVelocity(player.currentSpeed, rb.velocity.y);
 
-        if(player.isGroundDetected())
+        if (player.isGroundDetected())
         {
             player.coyoteUsageTimer = player.coyoteCountDown;
             stateMachine.changeState(player.idleState);

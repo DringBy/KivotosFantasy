@@ -23,12 +23,34 @@ public class PlayerJumpState : PlayerState
     {
         base.update();
 
-        // 自己加的
+        float vY = rb.velocity.y;
+
         // 起跳过程中控制player
-        if (xInput != 0)
+        if (xInput == 0 && player.currentSpeed != 0)
         {
-            player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
+            player.decelerate();
         }
+        else if (xInput * player.facingDir > 0)
+        {
+            player.accelerate(xInput);
+        }
+        else if (xInput * player.facingDir < 0)
+        {
+            player.reverseAccelerate(xInput);
+        }
+
+        // 起跳过程中控制player
+        //if (xInput != 0)
+        //{
+        //    player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
+        //}
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            vY = vY * player.jumpDecay;
+        }
+
+        player.setVelocity(player.currentSpeed, vY);
 
         if (rb.velocity.y < 0)
         {

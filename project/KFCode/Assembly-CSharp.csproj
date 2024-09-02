@@ -67,10 +67,8 @@
     <Compile Include="Assets\Player\PlayerAirState.cs" />
     <Compile Include="Assets\Player\PlayerWallJumpState.cs" />
     <Compile Include="Assets\Player\PlayerStateMachine.cs" />
-    <Compile Include="Assets\Player\PlayerAccelerateState.cs" />
     <Compile Include="Assets\Player\PlayerWallSlideState.cs" />
     <Compile Include="Assets\Player\PlayerState.cs" />
-    <Compile Include="Assets\Player\PlayerDecelerateState.cs" />
     <Compile Include="Assets\Player\PlayerIdleState.cs" />
     <Compile Include="Assets\Player\Player.cs" />
   </ItemGroup>

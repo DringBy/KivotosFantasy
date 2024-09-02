@@ -11,8 +11,9 @@ public class PlayerWallJumpState : PlayerState
     public override void enter()
     {
         base.enter();
-        stateTimer = 0.4f;
-        player.setVelocity(2 * -player.facingDir, player.jumpForce);
+        stateTimer = player.wallJumpTime;
+        player.currentSpeed = player.wallJumpForceX * -player.facingDir;
+        player.setVelocity(player.currentSpeed, player.wallJumpForceY);
     }
 
     public override void exit()
