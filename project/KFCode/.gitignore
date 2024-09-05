@@ -1,2 +1,6 @@
+.vs/
 Library/
-Player.rar
+Temp/
+.vsconfig
+*.csproj
+*.sln

@@ -22,25 +22,19 @@ public class PlayerAirState : PlayerState
     {
         base.update();
 
-        //// 下落途中控制player
-        //if (xInput != 0)
-        //{
-        //    player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
-        //}
         // 下落途中控制player
-        if (xInput == 0 && player.currentSpeed != 0)
+        if (xInput == 0 && currentXSpeed != 0)
         {
-            player.decelerate();
+            player.decelerate(currentXSpeed, currentYSpeed);
         }
         else if (xInput * player.facingDir > 0)
         {
-            player.accelerate(xInput);
+            player.accelerate(currentXSpeed, currentYSpeed, xInput);
         }
         else if (xInput * player.facingDir < 0)
         {
-            player.reverseAccelerate(xInput);
+            player.reverseAccelerate(currentXSpeed, currentYSpeed, xInput);
         }
-        player.setVelocity(player.currentSpeed, rb.velocity.y);
 
         if (player.isGroundDetected())
         {

@@ -29,13 +29,15 @@ public class PlayerGroundedState : PlayerState
         if (!player.isGroundDetected())
         {
             stateMachine.changeState(player.airState);
+            return;
         }
 
         // 正常起跳
         if (Input.GetKeyDown(KeyCode.Space) && player.isGroundDetected())
         {
-            stateMachine.changeState(player.jumpState);
             player.coyoteUsageTimer = 0f;  // 防止二段跳
+            stateMachine.changeState(player.jumpState);
+            return;
         }
 
     }

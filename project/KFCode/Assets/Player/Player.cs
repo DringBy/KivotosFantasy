@@ -11,7 +11,8 @@ public class Player : MonoBehaviour
     public float acceleration = 3f;  // 加速度
     public float deceleration = 6f;  // 减速度
     public float jumpDecay = 0.5f;  // 跳跃时若没长时间按住space的高度惩罚
-    public float currentSpeed;
+    public float x_speed;
+    public float y_speed;
 
     [Header("Wall Info")]
     public float wallSlideDecay = 0.85f;
@@ -88,6 +89,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        x_speed = rb.velocity.x;
+        y_speed = rb.velocity.y;
         stateMachine.currentState.update();
         //flipController(rb.velocity.x);
         checkForDashInput();
@@ -107,33 +110,45 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 同向运动过程中加速
     /// </summary>
-    /// <param name="xInput"></param>
-    public void accelerate(float xInput)
+    /// <param name="xSpeed">当前x速度</param>
+    /// <param name="ySpeed">当前y速度</param>
+    /// <param name="xInput">当前输入方向</param>
+    public void accelerate(float xSpeed, float ySpeed, float xInput)
     {
-        if (facingDir * (currentSpeed + xInput * acceleration) >= maxSpeed)
-            currentSpeed = facingDir * maxSpeed;
+        if (facingDir * (xSpeed + xInput * acceleration) >= maxSpeed)
+            xSpeed = facingDir * maxSpeed;
         else
-            currentSpeed += xInput * acceleration;
+            xSpeed += xInput * acceleration;
+
+        setVelocity(xSpeed, ySpeed);
     }
 
     /// <summary>
     /// 没有键盘输入时减速
     /// </summary>
-    public void decelerate()
+    /// <param name="xSpeed">当前x速度</param>
+    /// <param name="ySpeed">当前y速度</param>
+    public void decelerate(float xSpeed, float ySpeed)
     {
-        if ((currentSpeed - facingDir * deceleration) * currentSpeed > 0)
-            currentSpeed -= facingDir * deceleration;
+        if ((xSpeed - facingDir * deceleration) * xSpeed > 0)
+            xSpeed -= facingDir * deceleration;
         else
-            currentSpeed = 0;
+            xSpeed = 0;
+
+        setVelocity(xSpeed, ySpeed);
     }
 
     /// <summary>
-    ///  速度方向与输入方向不同时，反向加速
+    /// 速度方向与输入方向不同时，反向加速
     /// </summary>
-    /// <param name="xInput"></param>
-    public void reverseAccelerate(float xInput)
+    /// <param name="xSpeed">当前x速度</param>
+    /// <param name="ySpeed">当前y速度</param>
+    /// <param name="xInput">当前输入方向</param>
+    public void reverseAccelerate(float xSpeed, float ySpeed, float xInput)
     {
-        currentSpeed += xInput * acceleration - facingDir * deceleration;
+        xSpeed += xInput * acceleration - facingDir * deceleration;
+
+        setVelocity(xSpeed, ySpeed);
     }
 
     public bool isGroundDetected() => Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, whatIsGround);

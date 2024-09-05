@@ -12,7 +12,7 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.enter();
         rb.velocity = new Vector2(0, 0);
-        //player.currentSpeed = 0;  // 落地后速度为0
+        //player.currentXSpeed = 0;  // 落地后速度为0
     }
 
     public override void exit()
@@ -24,7 +24,7 @@ public class PlayerIdleState : PlayerGroundedState
     {
         base.update();
 
-        if (player.currentSpeed != 0)
+        if (currentXSpeed != 0)
         {
             stateMachine.changeState(player.moveState);
         }

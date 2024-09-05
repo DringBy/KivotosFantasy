@@ -19,66 +19,33 @@ public class PlayerMoveState : PlayerGroundedState
         base.exit();
     }
 
-    //public override void update()
-    //{
-    //    base.update();
-
-    //    player.setVelocity(xInput * player.maxSpeed, rb.velocity.y);
-
-    //    if (xInput == 0 || xInput == -player.facingDir)
-    //    {
-    //        stateMachine.changeState(player.decelerateState);
-    //    }
-
-    //    if (player.isWallDetected())
-    //    {
-    //        stateMachine.changeState(player.idleState);
-    //    }
-
-    //    // 进入减速状态
-    //    if(xInput == 0 || xInput == -player.facingDir)
-    //    {
-    //        stateMachine.changeState(player.decelerateState);
-    //    }
-    //}
-
     public override void update()
     {
+        Debug.Log("in moveState");
         base.update();
-
-        if (xInput == 0 && player.currentSpeed == 0)
-        {
-            stateMachine.changeState(player.idleState);
-        } 
-        else if (xInput == 0 && player.currentSpeed != 0)
-        {
-            //if ((player.currentSpeed - player.facingDir * player.deceleration) * player.currentSpeed > 0)
-            //    player.currentSpeed -= player.facingDir * player.deceleration;
-            //else
-            //    player.currentSpeed = 0;
-            player.decelerate();
-        }
-        else if (xInput * player.facingDir > 0)  // 同向运动加速
-        {
-            //if (player.facingDir * (player.currentSpeed + xInput * player.acceleration) >= player.maxSpeed)
-            //    player.currentSpeed = player.facingDir * player.maxSpeed;
-            //else 
-            //    player.currentSpeed += xInput * player.acceleration;
-            player.accelerate(xInput);
-        }
-        else // 反向运动
-        {
-            //player.currentSpeed += xInput * player.acceleration - player.facingDir * player.deceleration;
-            player.reverseAccelerate(xInput);
-        }
 
         if (player.isWallDetected() && xInput == 0)
         {
-            player.currentSpeed = 0;
             stateMachine.changeState(player.idleState);
             return;
         }
 
-        player.setVelocity(player.currentSpeed, rb.velocity.y);
+
+        if (xInput == 0 && currentXSpeed == 0)
+        {
+            stateMachine.changeState(player.idleState);
+        } 
+        else if (xInput == 0 && currentXSpeed != 0)
+        {
+            player.decelerate(currentXSpeed, currentYSpeed);
+        }
+        else if (xInput * player.facingDir > 0)  // 同向运动加速
+        {
+            player.accelerate(currentXSpeed, currentYSpeed, xInput);
+        }
+        else // 反向运动
+        {
+            player.reverseAccelerate(currentXSpeed, currentYSpeed, xInput);
+        }
     }
 }

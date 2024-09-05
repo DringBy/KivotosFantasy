@@ -11,6 +11,8 @@ public class PlayerJumpState : PlayerState
     public override void enter()
     {
         base.enter();
+        //player.setVelocity(currentXSpeed, player.jumpForce);
+        //Debug.Log(rb.velocity.x + "  " + rb.velocity.y);
         player.setVelocity(rb.velocity.x, player.jumpForce);
     }
 
@@ -23,20 +25,30 @@ public class PlayerJumpState : PlayerState
     {
         base.update();
 
-        float vY = rb.velocity.y;
+        Debug.Log("in jumpState");
+
+        // 根据长按space时间决定跳跃高度
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            currentYSpeed = currentYSpeed * player.jumpDecay;
+        }
 
         // 起跳过程中控制player
-        if (xInput == 0 && player.currentSpeed != 0)
+        if (xInput == 0 && currentXSpeed != 0)
         {
-            player.decelerate();
+            player.decelerate(currentXSpeed, currentYSpeed);
         }
         else if (xInput * player.facingDir > 0)
         {
-            player.accelerate(xInput);
+            player.accelerate(currentXSpeed, currentYSpeed, xInput);
         }
         else if (xInput * player.facingDir < 0)
         {
-            player.reverseAccelerate(xInput);
+            player.reverseAccelerate(currentXSpeed, currentYSpeed, xInput);
+        }
+        else
+        {
+            player.setVelocity(currentXSpeed, currentYSpeed);
         }
 
         // 起跳过程中控制player
@@ -45,16 +57,10 @@ public class PlayerJumpState : PlayerState
         //    player.setVelocity(xInput * player.maxSpeed * 0.8f, rb.velocity.y);
         //}
 
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            vY = vY * player.jumpDecay;
-        }
-
-        player.setVelocity(player.currentSpeed, vY);
-
-        if (rb.velocity.y < 0)
+        if (currentYSpeed < 0)
         {
             stateMachine.changeState(player.airState);
+            return;
         }
     }
 }

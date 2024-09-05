@@ -11,7 +11,7 @@ public class PlayerWallSlideState : PlayerState
     public override void enter()
     {
         base.enter();
-        player.currentSpeed = 0;
+        //player.currentXSpeed = 0;
     }
 
     public override void exit()
@@ -44,11 +44,13 @@ public class PlayerWallSlideState : PlayerState
         // 在该状态下 player可以被控制后移动得更快
         if (yInput < 0)
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
+            player.setVelocity(0, rb.velocity.y);
+            //rb.velocity = new Vector2(0, rb.velocity.y);
         }
         else
         {
-            rb.velocity = new Vector2(0, rb.velocity.y * player.wallSlideDecay);
+            player.setVelocity(0, rb.velocity.y * player.wallSlideDecay);
+            //rb.velocity = new Vector2(0, rb.velocity.y * player.wallSlideDecay);
         }
 
         // 若接触地面则退出状态
