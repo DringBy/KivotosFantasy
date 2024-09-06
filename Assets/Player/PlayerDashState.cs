@@ -28,19 +28,22 @@ public class PlayerDashState : PlayerState
         float xDashDir = Input.GetAxisRaw("Horizontal");
         float yDashDir = Input.GetAxisRaw("Vertical");
 
-        
+        // 八向dash
         if(xDashDir == 0 && yDashDir == 0)  // 没有输入方向则把面朝方向作为dash方向
         {
             xDashDir = player.facingDir;
             player.setVelocity(player.dashSpeed * xDashDir, 0);
+            player.currentXSpeed = player.dashSpeed * xDashDir;
         }
         else if(xDashDir == 0 || yDashDir == 0)  // 仅输入一个维度的方向
         {
             player.setVelocity(player.dashSpeed * xDashDir, player.dashSpeed * yDashDir);
+            player.currentXSpeed = player.dashSpeed * xDashDir;
         }
         else  // 输入两个维度的方向
         {
             player.setVelocity(player.dashSpeed * xDashDir * 0.7071f, player.dashSpeed * yDashDir * 0.7071f);
+            player.currentXSpeed = player.dashSpeed * xDashDir;
         }
         
         //player.setVelocity(player.dashSpeed * player.dashDir, 0);
