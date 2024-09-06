@@ -1,0 +1,8 @@
+.vs/
+.vsconfig
+*.csproj
+*.sln
+
+Library/
+Temp/
+# *.meta
